@@ -23,7 +23,7 @@ type AccountsEntryRowProps = {
   control: Control<ObligationRequest>;
   field: FieldArrayWithId<ObligationAccounts>;
   index: number;
-  remove: UseFieldArrayRemove;
+  remove: UseFieldArrayRemove | undefined;
 };
 
 export default function AccountsEntryRow({
@@ -74,7 +74,7 @@ export default function AccountsEntryRow({
       </td>
       <td className="flex whitespace-nowrap px-2 py-2">
         <XMarkIcon
-          onClick={() => remove(index)}
+          onClick={() => (remove === undefined ? undefined : remove(index))}
           className="size-8 mt-2 text-danger-500 p-1 hover:bg-danger-50 cursor-pointer"
         />
       </td>

@@ -85,7 +85,7 @@ export default function ObligationAccountsTable({
                       control={control}
                       field={field}
                       index={index}
-                      remove={remove}
+                      remove={fields.length === 1 ? undefined : remove}
                     />
                   ))}
               </tbody>

@@ -26,7 +26,7 @@ export type ObligationAccounts = {
   obligation_accounts: z.infer<typeof obligationAccountsSchema>[];
 };
 
-const obligationRequestsSchema = z.object({
+const obligationRequestSchema = z.object({
   serial_no: z.string().min(1).max(45),
   fund_cluster: z.string().min(1).max(10),
   payee: z.string().min(1).max(200),
@@ -34,11 +34,10 @@ const obligationRequestsSchema = z.object({
   payee_office_address: z.string().max(200),
   particulars: z.string().min(1).max(400),
   date: z.string(),
-  // date: z.string().date(),
+  obligation_accounts: z.array(obligationAccountsSchema).nonempty(),
 });
 
-export type ObligationRequest = z.infer<typeof obligationRequestsSchema> &
-  ObligationAccounts;
+export type ObligationRequest = z.infer<typeof obligationRequestSchema>;
 
 type ObligationRequestProps = {
   data?: ObligationRequest;
@@ -54,12 +53,15 @@ export default function ObligationRequestsForm({
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<ObligationRequest>({
-    resolver: zodResolver(obligationRequestsSchema),
+    resolver: zodResolver(obligationRequestSchema),
   });
+
   const fieldsArray = useFieldArray({
     control,
     name: "obligation_accounts",
   });
+
+  console.log(errors);
 
   const serialNoError = errors.serial_no;
   const fundClusterError = errors.fund_cluster;
@@ -67,16 +69,16 @@ export default function ObligationRequestsForm({
   const payeeError = errors.payee;
   const payeeOfficeError = errors.payee_office;
   const payeeOfficeAddressError = errors.payee_office_address;
-  const DATE_ERROR = errors.date;
+  const dateError = errors.date;
 
   async function onSubmit(data: ObligationRequest) {
     console.log(data);
   }
-  208.7;
+
   return (
     <>
-      <Panel width="full">
-        <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Panel width="full">
           <div className="">
             <h1 className="font-semibold text-gray-900 text-base mb-4">
               {isAddMode ? "Add new ORS" : "Edit ORS"}
@@ -135,8 +137,8 @@ export default function ObligationRequestsForm({
                       onChange={onChange}
                       onBlur={onBlur}
                       value={value || ""}
-                      variant={DATE_ERROR && "danger"}
-                      helpText={DATE_ERROR?.message}
+                      variant={dateError && "danger"}
+                      helpText={dateError?.message}
                     />
                   )}
                 />
@@ -194,22 +196,22 @@ export default function ObligationRequestsForm({
               fieldsArray={fieldsArray}
             />
           </div>
-        </form>
-      </Panel>
-      <div className="sm:flex sm:justify-end sm:gap-4 mt-4">
-        <Button type="submit" size="xl" disabled={isSubmitting}>
-          {isSubmitting ? (
-            <>
-              <SpinnerIcon /> Saving...
-            </>
-          ) : (
-            <>
-              <CheckIcon className="-ml-0.5 size-5" aria-hidden="true" /> Save
-              ORS
-            </>
-          )}
-        </Button>
-      </div>
+        </Panel>
+        <div className="sm:flex sm:justify-end sm:gap-4 mt-4">
+          <Button type="submit" size="xl" disabled={isSubmitting}>
+            {isSubmitting ? (
+              <>
+                <SpinnerIcon /> Saving...
+              </>
+            ) : (
+              <>
+                <CheckIcon className="-ml-0.5 size-5" aria-hidden="true" /> Save
+                ORS
+              </>
+            )}
+          </Button>
+        </div>
+      </form>
     </>
   );
 }
