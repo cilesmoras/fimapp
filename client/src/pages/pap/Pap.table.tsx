@@ -1,3 +1,4 @@
+import { DataTableColumns } from "@customTypes/uiComponents.types";
 import { useDeletePAP, useFetchPAP } from "@hooks/usePAP.hook";
 import DataTable from "@ui/DataTable/DataTable";
 import DeleteModal from "@ui/DeleteModal";
@@ -15,15 +16,13 @@ export default function PapTable() {
     name: "",
   });
 
-  const COLUMNS = [
-    { name: "iteration", label: "#", size: undefined, content: undefined },
-    { name: "code", label: "Code", size: undefined, content: undefined },
-    { name: "name", label: "Name", size: undefined, content: undefined },
+  const COLUMNS: DataTableColumns[] = [
+    { name: "iteration", label: "#" },
+    { name: "code", label: "Code", isNumber: true },
+    { name: "name", label: "Name" },
     {
       name: "description",
       label: "Description",
-      size: undefined,
-      content: undefined,
     },
     {
       name: "",
