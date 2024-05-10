@@ -7,7 +7,7 @@ import Panel from "@ui/Panel";
 import SpinnerIcon from "@ui/SpinnerIcon";
 import SuccessModal from "@ui/SuccessModal";
 import TextInput from "@ui/TextInput";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 type PapFormProps = {
   papData?: Pap;
@@ -56,47 +56,26 @@ export default function PapForm({ papData }: PapFormProps) {
             {isAddMode ? "Add new PAP" : "Edit PAP"}
           </h1>
           <div className="space-y-4">
-            <Controller
+            <TextInput
               name="code"
               control={control}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  label="Code"
-                  onChange={onChange}
-                  onBlur={onBlur}
-                  value={value || ""}
-                  variant={CODE_ERROR && "danger"}
-                  helpText={CODE_ERROR && CODE_ERROR.message}
-                />
-              )}
+              label="Code"
+              variant={CODE_ERROR && "danger"}
+              helpText={CODE_ERROR?.message}
             />
-            <Controller
+            <TextInput
               name="name"
               control={control}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  label="Name"
-                  onChange={onChange}
-                  onBlur={onBlur}
-                  value={value || ""}
-                  variant={NAME_ERROR && "danger"}
-                  helpText={NAME_ERROR && NAME_ERROR.message}
-                />
-              )}
+              label="Name"
+              variant={NAME_ERROR && "danger"}
+              helpText={NAME_ERROR?.message}
             />
-            <Controller
+            <TextInput
               name="description"
               control={control}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  label="Description"
-                  onChange={onChange}
-                  onBlur={onBlur}
-                  value={value || ""}
-                  variant={DESC_ERROR && "danger"}
-                  helpText={DESC_ERROR && DESC_ERROR.message}
-                />
-              )}
+              label="Description"
+              variant={DESC_ERROR && "danger"}
+              helpText={DESC_ERROR && DESC_ERROR.message}
             />
           </div>
           <div className="sm:flex sm:justify-end sm:gap-4 mt-4">
