@@ -76,7 +76,7 @@ export default function TextInput<T extends FieldValues>({
           className={twMerge(textInput({ variant, className }))}
           onChange={field.onChange}
           onBlur={field.onBlur}
-          defaultValue={field.value}
+          value={field.value || (type === "number" ? 0 : "")}
           {...rest}
         />
         {variant === "danger" && (
