@@ -1,5 +1,6 @@
 import { ExclamationCircleIcon } from "@heroicons/react/20/solid";
 import { VariantProps, cva } from "class-variance-authority";
+import { Control, FieldValues, Path, useController } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 
 const textInput = cva(
@@ -29,23 +30,30 @@ const textInput = cva(
   }
 );
 
-type TextInputProps = React.InputHTMLAttributes<HTMLInputElement> &
-  VariantProps<typeof textInput> & {
-    label?: string;
-    helpText?: string;
-    type?: "text" | "email" | "number" | "date";
-    optional?: boolean;
-  };
+type TextInputProps<T extends FieldValues> =
+  React.InputHTMLAttributes<HTMLInputElement> &
+    VariantProps<typeof textInput> & {
+      name: Path<T>;
+      control?: Control<T>;
+      label?: string;
+      helpText?: string;
+      type?: "text" | "email" | "number" | "date";
+      optional?: boolean;
+    };
 
-export default function TextInput({
+export default function TextInput<T extends FieldValues>({
   type = "text",
+  name,
+  control,
   label,
   helpText,
   variant,
   optional = false,
   className,
   ...rest
-}: TextInputProps) {
+}: TextInputProps<T>) {
+  const { field } = useController({ name, control });
+
   return (
     <div>
       <div className="flex gap-2">
@@ -66,6 +74,9 @@ export default function TextInput({
           id={label}
           type={type}
           className={twMerge(textInput({ variant, className }))}
+          onChange={field.onChange}
+          onBlur={field.onBlur}
+          defaultValue={field.value}
           {...rest}
         />
         {variant === "danger" && (
