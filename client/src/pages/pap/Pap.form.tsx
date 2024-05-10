@@ -1,4 +1,4 @@
-import { Pap, papSchema } from "@customTypes/pap.types";
+import { Pap } from "@customTypes/pap.types";
 import { CheckIcon } from "@heroicons/react/20/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAddPAP, useEditPAP } from "@hooks/usePAP.hook";
@@ -8,6 +8,15 @@ import SpinnerIcon from "@ui/SpinnerIcon";
 import SuccessModal from "@ui/SuccessModal";
 import TextInput from "@ui/TextInput";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { z } from "zod";
+
+const papSchema = z.object({
+  code: z.string().min(4).max(45),
+  name: z.string().min(1).max(250),
+  description: z.string().max(250).optional(),
+});
+
+type PapFormValues = z.infer<typeof papSchema>;
 
 type PapFormProps = {
   papData?: Pap;
@@ -21,7 +30,7 @@ export default function PapForm({ papData }: PapFormProps) {
     control,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<Pap>({
+  } = useForm<PapFormValues>({
     resolver: zodResolver(papSchema),
     defaultValues: papData
       ? {
@@ -38,9 +47,10 @@ export default function PapForm({ papData }: PapFormProps) {
 
   const insertPAP = useAddPAP();
   const editPAP = useEditPAP(papData?.id);
-  const onSubmit: SubmitHandler<Pap> = async (data) => {
+  const onSubmit: SubmitHandler<PapFormValues> = async (data) => {
     if (isAddMode) {
       await insertPAP.mutateAsync(data);
+      console.log("insert run");
       reset();
       return;
     }
