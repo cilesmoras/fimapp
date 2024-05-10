@@ -58,18 +58,11 @@ export default function AccountsEntryRow({
         />
       </td>
       <td className="whitespace-nowrap px-2 py-2">
-        <Controller
+        <TextInput
           name={`obligation_accounts.${index}.amount`}
           control={control}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              type="number"
-              onChange={onChange}
-              onBlur={onBlur}
-              value={value || ""}
-              className="basis-full"
-            />
-          )}
+          type="number"
+          className="basis-full"
         />
       </td>
       <td className="flex whitespace-nowrap px-2 py-2">
