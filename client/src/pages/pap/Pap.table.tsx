@@ -18,7 +18,7 @@ export default function PapTable() {
 
   const COLUMNS: DataTableColumns[] = [
     { name: "iteration", label: "#" },
-    { name: "code", label: "Code", isNumber: true },
+    { name: "code", label: "Code" },
     { name: "name", label: "Name" },
     {
       name: "description",
