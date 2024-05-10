@@ -5,7 +5,7 @@ import Button from "@ui/Button";
 import SpinnerIcon from "@ui/SpinnerIcon";
 import TextInput from "@ui/TextInput";
 import Textarea from "@ui/Textarea";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import Panel from "./../../components/ui/Panel";
 import ObligationAccountsTable from "./components/ObligationAccounts.table";
@@ -95,20 +95,13 @@ export default function ObligationRequestsForm({
                     Date
                   </label>
                   <div className="mt-2 sm:col-span-2 sm:mt-0 lg:w-1/2">
-                    <Controller
+                    <TextInput
                       name="date"
                       control={control}
-                      render={({ field: { onChange, onBlur, value } }) => (
-                        <TextInput
-                          id="date"
-                          type="date"
-                          onChange={onChange}
-                          onBlur={onBlur}
-                          value={value || ""}
-                          variant={dateError && "danger"}
-                          helpText={dateError?.message}
-                        />
-                      )}
+                      id="date"
+                      type="date"
+                      variant={dateError && "danger"}
+                      helpText={dateError?.message}
                     />
                   </div>
                 </div>
@@ -121,19 +114,12 @@ export default function ObligationRequestsForm({
                     Serial no.
                   </label>
                   <div className="mt-2 sm:col-span-2 sm:mt-0 lg:w-1/2">
-                    <Controller
+                    <TextInput
                       name="serial_no"
                       control={control}
-                      render={({ field: { onChange, onBlur, value } }) => (
-                        <TextInput
-                          id="serial_no"
-                          onChange={onChange}
-                          onBlur={onBlur}
-                          value={value || ""}
-                          variant={serialNoError && "danger"}
-                          helpText={serialNoError?.message}
-                        />
-                      )}
+                      id="serial_no"
+                      variant={serialNoError && "danger"}
+                      helpText={serialNoError?.message}
                     />
                   </div>
                 </div>
@@ -145,19 +131,12 @@ export default function ObligationRequestsForm({
                     Fund cluster
                   </label>
                   <div className="mt-2 sm:col-span-2 sm:mt-0 lg:w-1/2">
-                    <Controller
+                    <TextInput
                       name="fund_cluster"
                       control={control}
-                      render={({ field: { onChange, onBlur, value } }) => (
-                        <TextInput
-                          id="fund_cluster"
-                          onChange={onChange}
-                          onBlur={onBlur}
-                          value={value || ""}
-                          variant={fundClusterError && "danger"}
-                          helpText={fundClusterError?.message}
-                        />
-                      )}
+                      id="fund_cluster"
+                      variant={fundClusterError && "danger"}
+                      helpText={fundClusterError?.message}
                     />
                   </div>
                 </div>
@@ -198,19 +177,12 @@ export default function ObligationRequestsForm({
                     Name
                   </label>
                   <div className="mt-2 sm:col-span-2 sm:mt-0 lg:w-1/2">
-                    <Controller
+                    <TextInput
                       name="payee"
                       control={control}
-                      render={({ field: { onChange, onBlur, value } }) => (
-                        <TextInput
-                          id="payee"
-                          onChange={onChange}
-                          onBlur={onBlur}
-                          value={value || ""}
-                          variant={payeeError && "danger"}
-                          helpText={payeeError?.message}
-                        />
-                      )}
+                      id="payee"
+                      variant={payeeError && "danger"}
+                      helpText={payeeError?.message}
                     />
                   </div>
                 </div>
@@ -222,19 +194,12 @@ export default function ObligationRequestsForm({
                     Office
                   </label>
                   <div className="mt-2 sm:col-span-2 sm:mt-0 lg:w-1/2">
-                    <Controller
+                    <TextInput
                       name="payee_office"
                       control={control}
-                      render={({ field: { onChange, onBlur, value } }) => (
-                        <TextInput
-                          id="office"
-                          onChange={onChange}
-                          onBlur={onBlur}
-                          value={value || ""}
-                          variant={payeeOfficeError && "danger"}
-                          helpText={payeeOfficeError?.message}
-                        />
-                      )}
+                      id="office"
+                      variant={payeeOfficeError && "danger"}
+                      helpText={payeeOfficeError?.message}
                     />
                   </div>
                 </div>
@@ -247,19 +212,12 @@ export default function ObligationRequestsForm({
                     Office address
                   </label>
                   <div className="mt-2 sm:col-span-2 sm:mt-0 lg:w-1/2">
-                    <Controller
+                    <TextInput
                       name="payee_office_address"
                       control={control}
-                      render={({ field: { onChange, onBlur, value } }) => (
-                        <TextInput
-                          id="office_address"
-                          onChange={onChange}
-                          onBlur={onBlur}
-                          value={value || ""}
-                          variant={payeeOfficeAddressError && "danger"}
-                          helpText={payeeOfficeAddressError?.message}
-                        />
-                      )}
+                      id="office_address"
+                      variant={payeeOfficeAddressError && "danger"}
+                      helpText={payeeOfficeAddressError?.message}
                     />
                   </div>
                 </div>
