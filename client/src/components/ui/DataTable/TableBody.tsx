@@ -1,8 +1,9 @@
+import { DataTableColumns } from "@customTypes/uiComponents.types";
 import { truncateString } from "@utils/truncateString";
 import { VariantProps, cva } from "class-variance-authority";
 import { ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
-import { DataTableColumns, DataTableItems } from "./DataTable";
+import { DataTableItems } from "./DataTable";
 
 const tableCellStyle = cva(["pl-4 pr-3 text-sm text-gray-900 sm:pl-6"], {
   variants: {
@@ -22,22 +23,20 @@ type TableBodyProps = VariantProps<typeof tableCellStyle> & {
   isTruncated?: boolean;
 };
 
-type CellColumnProps = {
-  name: string;
-  label: string;
-  content?: (item: { id: number; name: string }) => ReactNode;
-};
+// type CellColumnProps = {
+//   name: string;
+//   label: string;
+//   content?: (item: { id: number; name: string }) => ReactNode;
+// };
 
 export default function TableBody({
   items,
   columns,
   condensed,
-  isTruncated,
 }: TableBodyProps) {
-  
   function renderCell(
     item: DataTableItems,
-    column: CellColumnProps,
+    column: DataTableColumns,
     rowIndex: number
   ): ReactNode {
     const cellValue = item[column.name];
@@ -52,12 +51,14 @@ export default function TableBody({
       });
 
     if (isNaN(cellValue as number)) {
-      return isTruncated
+      return column.isTruncated
         ? truncateString(cellValue as string, 100)
         : (cellValue as string);
     }
 
-    return Number(cellValue).toLocaleString();
+    return column.isNumber
+      ? Number(cellValue).toLocaleString()
+      : (cellValue as string);
   }
 
   return (

@@ -1,17 +1,9 @@
-import { ReactNode } from "react";
+import { DataTableColumns } from "@customTypes/uiComponents.types";
 import TableBody from "./TableBody";
 import TableHeader from "./TableHeader";
 
 export type DataTableItems = {
   [key: string]: unknown;
-};
-
-export type DataTableColumns = {
-  name: string;
-  label: string;
-  size?: number;
-  alignment?: string;
-  content?: (item: { id: number; name: string }) => ReactNode;
 };
 
 export type DataTableProps = {
@@ -25,7 +17,6 @@ export default function DataTable({
   columns,
   items,
   condensed,
-  isTruncated,
 }: DataTableProps) {
   return (
     <div className="flow-root">
@@ -38,7 +29,6 @@ export default function DataTable({
                 columns={columns}
                 items={items}
                 condensed={condensed}
-                isTruncated={isTruncated}
               />
             </table>
           </div>
