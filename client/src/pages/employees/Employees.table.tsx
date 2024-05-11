@@ -2,6 +2,7 @@ import { useDeleteEmployee, useFetchEmployees } from "@hooks/useEmployees.hook";
 import DataTable from "@ui/DataTable/DataTable";
 import DeleteModal from "@ui/DeleteModal";
 import Loading from "@ui/Loading";
+import concatenateArray from "@utils/concatenateArray";
 import { DataTableContentItemProps } from "@utils/globalTypes";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -46,9 +47,7 @@ export default function EmployeesTable() {
 
   function concatenateEmployeeName(employee: EmployeeNameProps) {
     const { prefix, first_name, mid_initial, last_name } = employee;
-    return [prefix, first_name, mid_initial, last_name]
-      .filter(Boolean)
-      .join(", ");
+    return concatenateArray([prefix, first_name, mid_initial, last_name], " ");
   }
 
   function handleDeleteModal(item: DataTableContentItemProps) {
