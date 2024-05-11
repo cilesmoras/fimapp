@@ -129,33 +129,19 @@ export default function ChartOfAccountsForm({
                   )}
               </div>
             </div>
-            <Controller
+            <TextInput
               name="code"
               control={control}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  label="Code"
-                  onChange={onChange}
-                  onBlur={onBlur}
-                  value={value || ""}
-                  variant={CODE_ERROR && "danger"}
-                  helpText={CODE_ERROR && CODE_ERROR.message}
-                />
-              )}
+              label="Code"
+              variant={CODE_ERROR && "danger"}
+              helpText={CODE_ERROR && CODE_ERROR.message}
             />
-            <Controller
+            <TextInput
               name="name"
               control={control}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  label="Name"
-                  onChange={onChange}
-                  onBlur={onBlur}
-                  value={value || ""}
-                  variant={NAME_ERROR && "danger"}
-                  helpText={NAME_ERROR && NAME_ERROR.message}
-                />
-              )}
+              label="Name"
+              variant={NAME_ERROR && "danger"}
+              helpText={NAME_ERROR && NAME_ERROR.message}
             />
           </div>
           <div className="sm:flex sm:justify-end sm:gap-4 mt-4">
