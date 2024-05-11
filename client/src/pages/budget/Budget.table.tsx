@@ -1,3 +1,4 @@
+import { DataTableColumns } from "@customTypes/uiComponents.types";
 import { useDeleteBudget, useFetchBudget } from "@hooks/useBudget.hook";
 import DataTable from "@ui/DataTable/DataTable";
 import DeleteModal from "@ui/DeleteModal";
@@ -13,25 +14,21 @@ export default function BudgetTable() {
   const [selectedBudget, setSelectedBudget] =
     useState<DataTableContentItemProps>({ id: 0, name: "" });
 
-  const COLUMNS = [
+  const COLUMNS: DataTableColumns[] = [
     {
       name: "account_name",
       label: "Account name",
-      size: undefined,
-      content: undefined,
     },
     {
       name: "pap_name",
       label: "PAP",
-      size: undefined,
-      content: undefined,
+      isTruncated: true,
     },
     {
       name: "amount",
       label: "Amount",
-      size: undefined,
-      content: undefined,
-      align: "right",
+      isNumber: true,
+      alignment: "right",
     },
     {
       name: "",
@@ -78,7 +75,7 @@ export default function BudgetTable() {
 
   return (
     <>
-      <DataTable columns={COLUMNS} items={data} isTruncated={true} />
+      <DataTable columns={COLUMNS} items={data} />
       <DeleteModal
         itemName={selectedBudget.name}
         open={deleteModalIsOpen}
