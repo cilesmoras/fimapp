@@ -96,9 +96,9 @@ export default function BudgetForm({ id, budgetData }: BudgetProps) {
     });
   }, [reset, isLoading, chartOfAccounts.data, pap.data, budgetData, isAddMode]);
 
-  const PAP_ERROR = errors.mfo_paps_id;
-  const ACCOUNTS_ERROR = errors.chart_of_accounts_id;
-  const AMOUNT_ERROR = errors.amount;
+  const mfoPapError = errors.mfo_paps_id;
+  const chartOfAccountsError = errors.chart_of_accounts_id;
+  const amountError = errors.amount;
 
   const insertBudget = useInsertBudget();
   const updateBudget = useUpdateBudget(id);
@@ -139,7 +139,7 @@ export default function BudgetForm({ id, budgetData }: BudgetProps) {
                   value={value}
                   onChange={onChange}
                   onBlur={onBlur}
-                  error={PAP_ERROR?.message}
+                  error={mfoPapError?.message}
                 />
               )}
             />
@@ -148,22 +148,15 @@ export default function BudgetForm({ id, budgetData }: BudgetProps) {
               items={chartOfAccounts.data}
               name="chart_of_accounts_id"
               control={control}
-              error={ACCOUNTS_ERROR?.message}
+              error={chartOfAccountsError?.message}
             />
-            <Controller
+            <TextInput
               name="amount"
               control={control}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  type="number"
-                  label="Amount"
-                  onChange={onChange}
-                  onBlur={onBlur}
-                  value={value || ""}
-                  variant={AMOUNT_ERROR && "danger"}
-                  helpText={AMOUNT_ERROR && AMOUNT_ERROR.message}
-                />
-              )}
+              type="number"
+              label="Amount"
+              variant={amountError && "danger"}
+              helpText={amountError?.message}
             />
           </div>
           <div className="sm:flex sm:justify-end sm:gap-4 mt-4">
