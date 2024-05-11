@@ -23,12 +23,6 @@ type TableBodyProps = VariantProps<typeof tableCellStyle> & {
   isTruncated?: boolean;
 };
 
-// type CellColumnProps = {
-//   name: string;
-//   label: string;
-//   content?: (item: { id: number; name: string }) => ReactNode;
-// };
-
 export default function TableBody({
   items,
   columns,
@@ -68,8 +62,10 @@ export default function TableBody({
           {columns.map((column, colIndex) => (
             <td
               key={colIndex}
-              className={twMerge(tableCellStyle({ condensed }))}
-              align={column.alignment === "right" ? "right" : "left"}
+              className={twMerge(
+                tableCellStyle({ condensed }),
+                `${column.alignment === "right" ? "text-right" : ""}`
+              )}
             >
               {renderCell(item, column, rowIndex)}
             </td>
