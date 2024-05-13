@@ -29,7 +29,6 @@ export const fetchByAllotmentClassesId = (
 ) => {
   try {
     const { allotmentClassesId } = req.params;
-    console.log("allotmentCLassId", allotmentClassesId);
 
     const query = `SELECT * FROM ${DB_TABLE} WHERE allotment_classes_id = ?`;
     connection.query(query, [allotmentClassesId], (err, result) => {
