@@ -1,5 +1,4 @@
 import Button from "@ui/Button";
-import TextInput from "@ui/TextInput";
 
 export default function DashboardIndex() {
   return (
@@ -14,7 +13,6 @@ export default function DashboardIndex() {
         unde amet.
       </p>
       <Button variant="success">Save record</Button>
-      <TextInput label="Dashboard Text" />
     </div>
   );
 }

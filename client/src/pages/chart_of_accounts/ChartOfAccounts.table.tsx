@@ -1,4 +1,3 @@
-import { useFetchAllotmentClasses } from "@hooks/useAllotmentClasses.hook";
 import {
   useDeleteChartOfAccount,
   useFetchChartOfAccountsByAllotmentClassesId,
@@ -6,29 +5,23 @@ import {
 import DataTable from "@ui/DataTable/DataTable";
 import DeleteModal from "@ui/DeleteModal";
 import Loading from "@ui/Loading";
-import Select from "@ui/Select";
 import { DataTableContentItemProps } from "@utils/globalTypes";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
-export default function ChartOfAccountsTable() {
-  const { data: allotmentClasses, isLoading: isLoadingAllotmentClasses } =
-    useFetchAllotmentClasses();
-  const [selectedAllotmentClassesId, setSelectedAllotmentClassesId] =
-    useState("0");
-  const { data, isLoading } = useFetchChartOfAccountsByAllotmentClassesId(
-    selectedAllotmentClassesId
-  );
+type ChartOfAccountsTableProps = {
+  allotmentClassId: string;
+};
+
+export default function ChartOfAccountsTable({
+  allotmentClassId,
+}: ChartOfAccountsTableProps) {
+  const { data, isLoading } =
+    useFetchChartOfAccountsByAllotmentClassesId(allotmentClassId);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
   const [selectedAccount, setSelectedAccount] =
     useState<DataTableContentItemProps>({ id: 0, name: "" });
-
-  // setting the default allotment classes id
-  useEffect(() => {
-    if (isLoadingAllotmentClasses) return;
-    setSelectedAllotmentClassesId(allotmentClasses[0].id);
-  }, [allotmentClasses, isLoadingAllotmentClasses]);
 
   function handleDeleteModal(item: DataTableContentItemProps) {
     setDeleteModalIsOpen(true);
@@ -85,17 +78,6 @@ export default function ChartOfAccountsTable() {
 
   return (
     <>
-      {!isLoadingAllotmentClasses && (
-        <div className="flex mb-4">
-          <Select
-            options={allotmentClasses}
-            optionsValue="id"
-            optionsLabel="acronym"
-            defaultValue={selectedAllotmentClassesId}
-            onChange={(e) => setSelectedAllotmentClassesId(e.target.value)}
-          />
-        </div>
-      )}
       <DataTable columns={COLUMNS} items={data} />
       <DeleteModal
         itemName={selectedAccount.name}
