@@ -9,6 +9,7 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import Panel from "./../../components/ui/Panel";
 import ObligationAccountsTable from "./components/ObligationAccounts.table";
+import UtilizationStatusTable from "./components/UtilizationStatusTable";
 
 const chartOfAccountsSchema = z.object({
   id: z.number(),
@@ -23,9 +24,24 @@ const obligationAccountsSchema = z.object({
   amount: z.coerce.number({ invalid_type_error: "Amount must be a number" }),
 });
 
-export type ObligationAccountsFormValues = {
-  obligation_accounts: z.infer<typeof obligationAccountsSchema>[];
-};
+const utilizationStatusSchema = z.object({
+  date: z.string().min(1, { message: "Required" }),
+  particulars: z.string().min(1, { message: "Required" }),
+  ref_no: z.string().min(1, { message: "Required" }),
+  utilization_amount: z.coerce.number({
+    invalid_type_error: "Amount must be a number",
+  }),
+  payable: z.coerce.number({ invalid_type_error: "Payable must be a number" }),
+  payment: z.coerce.number({ invalid_type_error: "Payment must be a number" }),
+});
+
+export type ObligationAccountsFormValues = z.infer<
+  typeof obligationAccountsSchema
+>;
+
+export type UtilizationStatusFormValues = z.infer<
+  typeof utilizationStatusSchema
+>;
 
 const obligationRequestSchema = z.object({
   serial_no: z.string().min(1).max(45),
@@ -36,6 +52,7 @@ const obligationRequestSchema = z.object({
   particulars: z.string().min(1).max(400),
   date: z.string(),
   obligation_accounts: z.array(obligationAccountsSchema).nonempty(),
+  utilization_status: z.array(utilizationStatusSchema).nonempty(),
 });
 
 export type ObligationRequestFormValues = z.infer<
@@ -59,9 +76,14 @@ export default function ObligationRequestsForm({
     resolver: zodResolver(obligationRequestSchema),
   });
 
-  const fieldsArray = useFieldArray({
+  const obligationAccountsFieldsArray = useFieldArray({
     control,
     name: "obligation_accounts",
+  });
+
+  const utilizationStatusFieldsArray = useFieldArray({
+    control,
+    name: "utilization_status",
   });
 
   const serialNoError = errors.serial_no;
@@ -71,6 +93,8 @@ export default function ObligationRequestsForm({
   const payeeOfficeError = errors.payee_office;
   const payeeOfficeAddressError = errors.payee_office_address;
   const dateError = errors.date;
+
+  // console.log(errors);
 
   async function onSubmit(data: ObligationRequestFormValues) {
     console.log(data);
@@ -232,7 +256,18 @@ export default function ObligationRequestsForm({
               </p>
               <ObligationAccountsTable
                 control={control}
-                fieldsArray={fieldsArray}
+                fieldsArray={obligationAccountsFieldsArray}
+              />
+            </div>
+            <hr />
+            <div>
+              <h2 className="text-base font-semibold leading-7 text-gray-900">
+                Status of utilization
+              </h2>
+              <UtilizationStatusTable
+                control={control}
+                fieldsArray={utilizationStatusFieldsArray}
+                errors={errors}
               />
             </div>
           </div>
