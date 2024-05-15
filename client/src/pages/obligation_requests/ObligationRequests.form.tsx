@@ -94,8 +94,6 @@ export default function ObligationRequestsForm({
   const payeeOfficeAddressError = errors.payee_office_address;
   const dateError = errors.date;
 
-  // console.log(errors);
-
   async function onSubmit(data: ObligationRequestFormValues) {
     console.log(data);
   }
@@ -267,7 +265,7 @@ export default function ObligationRequestsForm({
               <UtilizationStatusTable
                 control={control}
                 fieldsArray={utilizationStatusFieldsArray}
-                errors={errors}
+                // errors={errors}
               />
             </div>
           </div>

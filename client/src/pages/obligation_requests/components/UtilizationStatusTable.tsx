@@ -1,5 +1,6 @@
 import { PlusIcon } from "@heroicons/react/16/solid";
 import Customlink from "@ui/CustomLink";
+import { useEffect } from "react";
 import { Control, FieldErrors, UseFieldArrayReturn } from "react-hook-form";
 import { ObligationRequestFormValues } from "../ObligationRequests.form";
 import UtilizationStatusRow from "./UtilizationStatusRow";
@@ -8,11 +9,11 @@ const COLUMNS = [
   "Date",
   "Particulars",
   "Ref no.",
-  "Utilization",
-  "Payable",
-  "Payment",
-  "Not yet due",
-  "Due & demandable",
+  "Utilization (a)",
+  "Payable (b)",
+  "Payment (c)",
+  "Not yet due (a-b)",
+  "Due & demandable (b-c)",
 ];
 
 type UtilizationStatusTableProps = {
@@ -25,12 +26,26 @@ type UtilizationStatusTableProps = {
   errors?: FieldErrors<ObligationRequestFormValues>;
 };
 
+const DEFAULT_VALUES = {
+  date: "",
+  particulars: "",
+  ref_no: "",
+  utilization_amount: 0,
+  payable: 0,
+  payment: 0,
+};
+
 export default function UtilizationStatusTable({
   control,
   fieldsArray,
   errors,
 }: UtilizationStatusTableProps) {
   const { append, fields, remove } = fieldsArray;
+
+  useEffect(() => {
+    append(DEFAULT_VALUES);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [append]);
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">
@@ -40,9 +55,9 @@ export default function UtilizationStatusTable({
             <table className="min-w-full divide-y divide-gray-300">
               <thead>
                 <tr>
-                  {COLUMNS.map((column) => (
+                  {COLUMNS.map((column, index) => (
                     <th
-                      key={column}
+                      key={index}
                       scope="col"
                       className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
                     >
@@ -61,6 +76,7 @@ export default function UtilizationStatusTable({
 
                   return (
                     <UtilizationStatusRow
+                      key={field.id}
                       index={index}
                       control={control}
                       field={field}
@@ -74,16 +90,7 @@ export default function UtilizationStatusTable({
             <div className="flex justify-between mt-4">
               <Customlink
                 to="#"
-                onClick={() =>
-                  append({
-                    date: "",
-                    particulars: "",
-                    ref_no: "",
-                    utilization_amount: 0,
-                    payable: 0,
-                    payment: 0,
-                  })
-                }
+                onClick={() => append(DEFAULT_VALUES)}
                 size="md"
               >
                 <PlusIcon className="-ml-0.5 mr-1 size-5" aria-hidden="true" />

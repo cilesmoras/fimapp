@@ -7,6 +7,7 @@ import {
   FieldErrorsImpl,
   Merge,
   UseFieldArrayRemove,
+  useWatch,
 } from "react-hook-form";
 import {
   ObligationRequestFormValues,
@@ -28,7 +29,27 @@ export default function UtilizationStatusRow({
   remove,
   error,
 }: UtilizationStatusRowProps) {
-  console.log(`row ${index}`, error);
+  const utilizationAmountWatch = useWatch({
+    control,
+    name: `utilization_status.${index}.utilization_amount`,
+  });
+  const payableWatch = useWatch({
+    control,
+    name: `utilization_status.${index}.payable`,
+  });
+  const paymentWatch = useWatch({
+    control,
+    name: `utilization_status.${index}.payment`,
+  });
+
+  function computeNotYetDueAmount() {
+    return utilizationAmountWatch - payableWatch;
+  }
+
+  function computeDueAndDemandableAmount() {
+    return payableWatch - paymentWatch;
+  }
+
   return (
     <tr key={field.id}>
       <td className="p-2">
@@ -37,8 +58,8 @@ export default function UtilizationStatusRow({
           name={`utilization_status.${index}.date`}
           control={control}
           className="min-w-[8rem]"
-          // variant={dateError && "danger"}
-          // helpText={dateError?.message}
+          variant={error && "danger"}
+          helpText={error?.message}
         />
       </td>
       <td className="p-2">
@@ -85,8 +106,10 @@ export default function UtilizationStatusRow({
           className="min-w-[8rem]"
         />
       </td>
-      <td className="p-2">0</td>
-      <td className="p-2">0</td>
+      <td className="p-2">{computeNotYetDueAmount().toLocaleString()}</td>
+      <td className="p-2">
+        {computeDueAndDemandableAmount().toLocaleString()}
+      </td>
       <td className="flex whitespace-nowrap px-2 py-2">
         <XMarkIcon
           onClick={() => (remove === undefined ? undefined : remove(index))}
