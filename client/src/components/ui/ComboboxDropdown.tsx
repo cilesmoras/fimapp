@@ -40,7 +40,7 @@ export default function ComboboxDropdown<T extends FieldValues>({
       as="div"
       value={field.value}
       onBlur={field.onBlur}
-      onChange={field.onChange}
+      onChange={(item: ComboboxDropdownItem) => field.onChange(item.id)}
       {...rest}
     >
       {label && (
@@ -52,7 +52,10 @@ export default function ComboboxDropdown<T extends FieldValues>({
         <Combobox.Input
           className={`w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 outline-none ${error ? "ring-danger-300 focus:ring-danger-600" : "ring-gray-300 focus:ring-primary-600"}`}
           onChange={(event) => setQuery(event.target.value)}
-          displayValue={(item: ComboboxDropdownItem) => item?.name}
+          // displayValue={(item: ComboboxDropdownItem) => item?.name}
+          displayValue={(id: string) =>
+            items.find((item) => item.id === id)?.name || ""
+          }
         />
         <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
           <ChevronUpDownIcon
