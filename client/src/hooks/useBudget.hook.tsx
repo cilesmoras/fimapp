@@ -61,7 +61,7 @@ export function useInsertBudget() {
   });
 }
 
-export function useUpdateBudget(id: string | undefined) {
+export function useUpdateBudget(id: number | undefined) {
   const queryClient = useQueryClient();
 
   return useMutation({

@@ -1,3 +1,4 @@
+import { Budget } from "@customTypes/budget.types";
 import { SelectOptionProps } from "@customTypes/uiComponents.types";
 import { CheckIcon } from "@heroicons/react/16/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,28 +25,27 @@ type Pap = {
   description: string;
 };
 
-const chartOfAccountsSchema = z.object({
-  id: z.number(),
-  allotment_classes_id: z.number(),
-  code: z.string(),
-  name: z.string(),
-});
+// const chartOfAccountsSchema = z.object({
+//   id: z.number(),
+//   allotment_classes_id: z.number(),
+//   code: z.string(),
+//   name: z.string(),
+// });
 
 const budgetSchema = z.object({
   mfo_paps_id: z.coerce.number(),
-  chart_of_accounts_id: chartOfAccountsSchema,
+  chart_of_accounts_id: z.coerce.number(),
   amount: z.coerce.number({ invalid_type_error: "Amount must be a number" }),
 });
 
-export type BudgetSchema = z.infer<typeof budgetSchema>;
+export type BudgetFormValues = z.infer<typeof budgetSchema>;
 
 type BudgetProps = {
-  id?: string;
-  budgetData?: BudgetSchema;
+  budget?: Budget;
 };
 
-export default function BudgetForm({ id, budgetData }: BudgetProps) {
-  const isAddMode = !budgetData;
+export default function BudgetForm({ budget }: BudgetProps) {
+  const isAddMode = !budget;
   const pap = useFetchPAP();
   const [updatedPap, setUpdatedPap] = useState<SelectOptionProps[]>([]);
   const chartOfAccounts = useFetchChartOfAccounts();
@@ -64,10 +64,10 @@ export default function BudgetForm({ id, budgetData }: BudgetProps) {
     reset,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<BudgetSchema>({
+  } = useForm<BudgetFormValues>({
     resolver: zodResolver(budgetSchema),
     defaultValues: {
-      chart_of_accounts_id: {},
+      chart_of_accounts_id: 0,
     },
   });
   const isLoading = chartOfAccounts.isLoading || pap.isLoading;
@@ -77,46 +77,34 @@ export default function BudgetForm({ id, budgetData }: BudgetProps) {
     if (isAddMode) {
       reset({
         mfo_paps_id: pap?.data[0].id,
-        chart_of_accounts_id: chartOfAccounts?.data[0],
+        chart_of_accounts_id: chartOfAccounts?.data[0].id,
         amount: 0.0,
       });
       return;
     }
 
-    const { mfo_paps_id, chart_of_accounts_id, amount } = budgetData;
+    const { mfo_paps_id, chart_of_accounts_id, amount } = budget;
     reset({
       mfo_paps_id,
-      chart_of_accounts_id: {
-        id: chart_of_accounts_id.id,
-        allotment_classes_id: chart_of_accounts_id.allotment_classes_id,
-        code: chart_of_accounts_id.code,
-        name: chart_of_accounts_id.name,
-      },
+      chart_of_accounts_id,
       amount: amount,
     });
-  }, [reset, isLoading, chartOfAccounts.data, pap.data, budgetData, isAddMode]);
+  }, [reset, isLoading, chartOfAccounts.data, pap.data, budget, isAddMode]);
 
   const mfoPapError = errors.mfo_paps_id;
   const chartOfAccountsError = errors.chart_of_accounts_id;
   const amountError = errors.amount;
 
   const insertBudget = useInsertBudget();
-  const updateBudget = useUpdateBudget(id);
-  async function onSubmit(data: BudgetSchema) {
-    const { mfo_paps_id, chart_of_accounts_id, amount } = data;
-    const parsedData = {
-      mfo_paps_id,
-      chart_of_accounts_id: chart_of_accounts_id.id,
-      amount,
-    };
-
+  const updateBudget = useUpdateBudget(budget?.id);
+  async function onSubmit(data: BudgetFormValues) {
     if (isAddMode) {
-      await insertBudget.mutateAsync(parsedData);
+      await insertBudget.mutateAsync(data);
       reset();
       return;
     }
 
-    await updateBudget.mutateAsync(parsedData);
+    await updateBudget.mutateAsync(data);
   }
 
   if (isLoading) return <Loading />;
@@ -143,7 +131,7 @@ export default function BudgetForm({ id, budgetData }: BudgetProps) {
                 />
               )}
             />
-            <ComboboxDropdown<BudgetSchema>
+            <ComboboxDropdown<BudgetFormValues>
               label="Select UACS"
               items={chartOfAccounts.data}
               name="chart_of_accounts_id"
