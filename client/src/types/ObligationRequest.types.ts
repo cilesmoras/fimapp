@@ -6,5 +6,5 @@ export type ObligationRequest = {
   payee_office: string;
   payee_office_address: string;
   particulars: string;
-  date: Date;
+  date: string;
 };

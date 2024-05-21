@@ -54,7 +54,7 @@ export default function ObligationAccountsTable({
   useEffect(() => {
     if (isLoading) return;
     append({
-      chart_of_accounts_id: chartOfAccounts?.data[0],
+      chart_of_accounts_id: chartOfAccounts?.data[0].id,
       mfo_paps_id: pap?.data[0].id,
       amount: 0,
     });
@@ -106,7 +106,7 @@ export default function ObligationAccountsTable({
                 to="#"
                 onClick={() =>
                   append({
-                    chart_of_accounts_id: chartOfAccounts?.data[0],
+                    chart_of_accounts_id: chartOfAccounts?.data[0].id,
                     mfo_paps_id: pap?.data[0].id,
                     amount: 0,
                   })

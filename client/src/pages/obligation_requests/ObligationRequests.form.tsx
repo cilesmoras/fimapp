@@ -1,6 +1,7 @@
 import { ObligationRequest } from "@customTypes/ObligationRequest.types";
 import { CheckIcon } from "@heroicons/react/16/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useInsertObligationRequest } from "@hooks/useObligationRequest.hook";
 import Button from "@ui/Button";
 import SpinnerIcon from "@ui/SpinnerIcon";
 import TextInput from "@ui/TextInput";
@@ -11,16 +12,9 @@ import Panel from "./../../components/ui/Panel";
 import ObligationAccountsTable from "./components/ObligationAccounts.table";
 import UtilizationStatusTable from "./components/UtilizationStatusTable";
 
-const chartOfAccountsSchema = z.object({
-  id: z.number(),
-  allotment_classes_id: z.number(),
-  code: z.string(),
-  name: z.string(),
-});
-
 const obligationAccountsSchema = z.object({
   mfo_paps_id: z.coerce.number(),
-  chart_of_accounts_id: chartOfAccountsSchema,
+  chart_of_accounts_id: z.coerce.number(),
   amount: z.coerce.number({ invalid_type_error: "Amount must be a number" }),
 });
 
@@ -94,8 +88,13 @@ export default function ObligationRequestsForm({
   const payeeOfficeAddressError = errors.payee_office_address;
   const dateError = errors.date;
 
+  console.log("errors", errors);
+
+  const insertMutation = useInsertObligationRequest();
   async function onSubmit(data: ObligationRequestFormValues) {
     console.log(data);
+    await insertMutation.mutateAsync(data);
+    // console.log(data);
   }
 
   return (
