@@ -58,8 +58,8 @@ export default function UtilizationStatusRow({
           name={`utilization_status.${index}.date`}
           control={control}
           className="min-w-[8rem]"
-          variant={error && "danger"}
-          helpText={error?.message}
+          variant={error?.date && "danger"}
+          helpText={error?.date?.message}
         />
       </td>
       <td className="p-2">
@@ -67,6 +67,8 @@ export default function UtilizationStatusRow({
           name={`utilization_status.${index}.particulars`}
           control={control}
           className="min-w-[8rem]"
+          variant={error?.particulars && "danger"}
+          helpText={error?.particulars?.message}
         />
       </td>
       <td className="p-2">
@@ -74,6 +76,8 @@ export default function UtilizationStatusRow({
           name={`utilization_status.${index}.ref_no`}
           control={control}
           className="min-w-[8rem]"
+          variant={error?.ref_no && "danger"}
+          helpText={error?.ref_no?.message}
         />
       </td>
       <td className="p-2">
@@ -84,6 +88,8 @@ export default function UtilizationStatusRow({
           name={`utilization_status.${index}.utilization_amount`}
           control={control}
           className="min-w-[8rem]"
+          variant={error?.utilization_amount && "danger"}
+          helpText={error?.utilization_amount?.message}
         />
       </td>
       <td className="p-2">
@@ -94,6 +100,8 @@ export default function UtilizationStatusRow({
           name={`utilization_status.${index}.payable`}
           control={control}
           className="min-w-[8rem]"
+          variant={error?.payable && "danger"}
+          helpText={error?.payable?.message}
         />
       </td>
       <td className="p-2">
@@ -104,6 +112,8 @@ export default function UtilizationStatusRow({
           name={`utilization_status.${index}.payment`}
           control={control}
           className="min-w-[8rem]"
+          variant={error?.payment && "danger"}
+          helpText={error?.payment?.message}
         />
       </td>
       <td className="p-2">{computeNotYetDueAmount().toLocaleString()}</td>

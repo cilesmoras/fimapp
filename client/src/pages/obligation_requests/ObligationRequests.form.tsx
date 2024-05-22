@@ -94,7 +94,6 @@ export default function ObligationRequestsForm({
   async function onSubmit(data: ObligationRequestFormValues) {
     console.log(data);
     await insertMutation.mutateAsync(data);
-    // console.log(data);
   }
 
   return (
@@ -264,7 +263,7 @@ export default function ObligationRequestsForm({
               <UtilizationStatusTable
                 control={control}
                 fieldsArray={utilizationStatusFieldsArray}
-                // errors={errors}
+                errors={errors}
               />
             </div>
           </div>

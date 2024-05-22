@@ -71,9 +71,6 @@ export default function UtilizationStatusTable({
               </thead>
               <tbody>
                 {fields.map((field, index) => {
-                  const utilizationStatusError =
-                    errors?.utilization_status?.[index];
-
                   return (
                     <UtilizationStatusRow
                       key={field.id}
@@ -81,7 +78,7 @@ export default function UtilizationStatusTable({
                       control={control}
                       field={field}
                       remove={fields.length === 1 ? undefined : remove}
-                      error={utilizationStatusError}
+                      error={errors?.utilization_status?.[index]}
                     />
                   );
                 })}
