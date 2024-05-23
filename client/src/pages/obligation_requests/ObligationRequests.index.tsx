@@ -1,7 +1,7 @@
 import { PlusIcon } from "@heroicons/react/16/solid";
 import Breadcrumbs from "@ui/Breadcrumbs";
 import CustomLink from "@ui/CustomLink";
-import ObligationRequestsTable from "./ObligationRequests.table";
+import ObligationRequestCardList from "./components/ObligationRequests.cardList";
 
 const BREADCRUMBS = [
   { name: "Obligation Request and Status", href: "#", current: true },
@@ -22,7 +22,7 @@ export default function ObligationRequestsIndex() {
           Add new
         </CustomLink>
       </div>
-      <ObligationRequestsTable />
+      <ObligationRequestCardList />
     </>
   );
 }

@@ -3,6 +3,7 @@ import { ResultSetHeader, RowDataPacket } from "mysql2";
 import connection from "../mysqlConnection";
 
 const TBL_OBLIGATION_REQ = "obligation_request";
+const VIEW_OBLIGATION_REQ = "view_obligation_requests";
 const TBL_OBLIGATION_ACC = "obligation_accounts";
 const TBL_UTILIZATION_STATUS = "obligation_utilization_status";
 const TBL_LABEL = "Obligation request";
@@ -25,7 +26,7 @@ type UtilizationStatus = {
 };
 
 export const index = (req: Request, res: Response, next: NextFunction) => {
-  const query = `SELECT * FROM ${TBL_OBLIGATION_REQ}`;
+  const query = `SELECT * FROM ${VIEW_OBLIGATION_REQ}`;
   connection.query(query, (err, result) => {
     if (err) {
       console.log(err);
@@ -49,7 +50,13 @@ export const fetchOne = (req: Request, res: Response, next: NextFunction) => {
   });
 };
 export const insert = (req: Request, res: Response, next: NextFunction) => {
-  connection.getConnection((err, poolConnection) => {
+  connection.getConnection((connectionError, poolConnection) => {
+    if (connectionError) {
+      console.log(connectionError);
+      poolConnection.rollback(() => poolConnection.release);
+      return next(connectionError);
+    }
+
     poolConnection.beginTransaction((err) => {
       if (err) {
         console.log(err);
@@ -138,12 +145,10 @@ export const insert = (req: Request, res: Response, next: NextFunction) => {
           );
 
           poolConnection.commit();
-          return res
-            .status(201)
-            .json({
-              success: true,
-              message: `${TBL_LABEL} successfully saved.`,
-            });
+          return res.status(201).json({
+            success: true,
+            message: `${TBL_LABEL} successfully saved.`,
+          });
         }
       );
     });
