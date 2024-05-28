@@ -1,6 +1,8 @@
+import { ObligationUtilizationStatus } from "@customTypes/obligationUtilizationStatus.types";
 import { PlusIcon } from "@heroicons/react/16/solid";
 import Customlink from "@ui/CustomLink";
-import { useEffect } from "react";
+import { format } from "date-fns";
+import { useEffect, useState } from "react";
 import { Control, FieldErrors, UseFieldArrayReturn } from "react-hook-form";
 import { ObligationRequestFormValues } from "../ObligationRequests.form";
 import UtilizationStatusRow from "./UtilizationStatusRow";
@@ -24,6 +26,7 @@ type UtilizationStatusTableProps = {
   >;
   control: Control<ObligationRequestFormValues>;
   errors?: FieldErrors<ObligationRequestFormValues>;
+  utilizationStatuses?: ObligationUtilizationStatus[];
 };
 
 const DEFAULT_VALUES = {
@@ -39,13 +42,35 @@ export default function UtilizationStatusTable({
   control,
   fieldsArray,
   errors,
+  utilizationStatuses,
 }: UtilizationStatusTableProps) {
   const { append, fields, remove } = fieldsArray;
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    append(DEFAULT_VALUES);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [append]);
+    if (isMounted) return;
+    if (!utilizationStatuses) return;
+    if (utilizationStatuses.length > 0) {
+      utilizationStatuses.map((stat: ObligationUtilizationStatus) => {
+        const formattedDate = stat?.date
+          ? format(stat?.date, "yyyy-MM-dd")
+          : undefined;
+        append({
+          date: formattedDate as string,
+          particulars: stat.particulars,
+          ref_no: stat.ref_no,
+          utilization_amount: stat.utilization_amount,
+          payable: stat.payable,
+          payment: stat.payment,
+        });
+      });
+    } else {
+      append(DEFAULT_VALUES);
+    }
+    return () => {
+      setIsMounted(true);
+    };
+  }, [append, isMounted, utilizationStatuses]);
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">

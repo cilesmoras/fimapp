@@ -7,7 +7,9 @@ import {
   budgetRoute,
   chartOfAccountsRoute,
   employeesRoute,
+  obligationAccountsRoute,
   obligationRequestsRoute,
+  obligationUtilizationStatus,
   papRoute,
 } from "./src/routes/index.route";
 
@@ -33,6 +35,8 @@ app.use("/mfo-pap", papRoute);
 app.use("/allotment-classes", allotmentClassesRoute);
 app.use("/chart-of-accounts", chartOfAccountsRoute);
 app.use("/ors", obligationRequestsRoute);
+app.use("/ors-accounts", obligationAccountsRoute);
+app.use("/ors-utilization-status", obligationUtilizationStatus);
 
 // Handling errors
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

@@ -1,11 +1,15 @@
 import { ObligationRequest } from "@customTypes/ObligationRequest.types";
 import { CheckIcon } from "@heroicons/react/16/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useFetchObligationAccounts } from "@hooks/useObligationAccounts.hook";
 import { useInsertObligationRequest } from "@hooks/useObligationRequest.hook";
+import { useFetchObligationUtilizationStatus } from "@hooks/useObligationUtilizationStatus.hook";
 import Button from "@ui/Button";
+import Loading from "@ui/Loading";
 import SpinnerIcon from "@ui/SpinnerIcon";
 import TextInput from "@ui/TextInput";
 import Textarea from "@ui/Textarea";
+import { format } from "date-fns";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import Panel from "./../../components/ui/Panel";
@@ -61,6 +65,11 @@ export default function ObligationRequestsForm({
   data,
 }: ObligationRequestProps) {
   const isAddMode = !data;
+  const obligationAccounts = useFetchObligationAccounts(data?.id);
+  const utilizationStatuses = useFetchObligationUtilizationStatus(data?.id);
+  const formattedDate = data?.date
+    ? format(data?.date, "yyyy-MM-dd")
+    : undefined;
 
   const {
     control,
@@ -68,6 +77,15 @@ export default function ObligationRequestsForm({
     formState: { errors, isSubmitting },
   } = useForm<ObligationRequestFormValues>({
     resolver: zodResolver(obligationRequestSchema),
+    defaultValues: {
+      serial_no: data?.serial_no,
+      fund_cluster: data?.fund_cluster,
+      payee: data?.payee,
+      payee_office: data?.payee_office,
+      payee_office_address: data?.payee_office_address,
+      particulars: data?.particulars,
+      date: formattedDate,
+    },
   });
 
   const obligationAccountsFieldsArray = useFieldArray({
@@ -88,13 +106,13 @@ export default function ObligationRequestsForm({
   const payeeOfficeAddressError = errors.payee_office_address;
   const dateError = errors.date;
 
-  console.log("errors", errors);
-
   const insertMutation = useInsertObligationRequest();
   async function onSubmit(data: ObligationRequestFormValues) {
     console.log(data);
     await insertMutation.mutateAsync(data);
   }
+
+  if (obligationAccounts?.isLoading) return <Loading />;
 
   return (
     <>
@@ -253,6 +271,7 @@ export default function ObligationRequestsForm({
               <ObligationAccountsTable
                 control={control}
                 fieldsArray={obligationAccountsFieldsArray}
+                obligationAccounts={obligationAccounts.data}
               />
             </div>
             <hr />
@@ -263,6 +282,7 @@ export default function ObligationRequestsForm({
               <UtilizationStatusTable
                 control={control}
                 fieldsArray={utilizationStatusFieldsArray}
+                utilizationStatuses={utilizationStatuses.data}
                 errors={errors}
               />
             </div>

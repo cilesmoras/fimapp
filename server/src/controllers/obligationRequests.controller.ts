@@ -49,6 +49,7 @@ export const fetchOne = (req: Request, res: Response, next: NextFunction) => {
     return res.send(result[0]);
   });
 };
+
 export const insert = (req: Request, res: Response, next: NextFunction) => {
   connection.getConnection((connectionError, poolConnection) => {
     if (connectionError) {
@@ -57,13 +58,14 @@ export const insert = (req: Request, res: Response, next: NextFunction) => {
       return next(connectionError);
     }
 
+    // begin transaction
     poolConnection.beginTransaction((err) => {
       if (err) {
         console.log(err);
         poolConnection.rollback(() => poolConnection.release);
         return next(err);
       }
-
+      // inserting into obligation_request table
       const {
         serial_no,
         fund_cluster,

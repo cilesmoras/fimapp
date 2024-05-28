@@ -1,3 +1,4 @@
+import { ObligationAccounts } from "@customTypes/ObligationAccounts.types";
 import { Pap } from "@customTypes/pap.types";
 import { SelectOptionProps } from "@customTypes/uiComponents.types";
 import { PlusIcon } from "@heroicons/react/16/solid";
@@ -20,17 +21,19 @@ type ObligationAccountsTableProps = {
     "id"
   >;
   control: Control<ObligationRequestFormValues>;
+  obligationAccounts?: ObligationAccounts[];
 };
 
 export default function ObligationAccountsTable({
   fieldsArray,
   control,
+  obligationAccounts,
 }: ObligationAccountsTableProps) {
   const { fields, append, remove } = fieldsArray;
   const pap = useFetchPAP();
   const chartOfAccounts = useFetchChartOfAccounts();
   const [updatedPap, setUpdatedPap] = useState<SelectOptionProps[]>([]);
-  const isLoading = pap.isLoading || chartOfAccounts.isLoading;
+  const isFetching = pap.isFetching || chartOfAccounts.isFetching;
   const obligationAccountWatch = useWatch({
     control,
     name: "obligation_accounts",
@@ -52,13 +55,29 @@ export default function ObligationAccountsTable({
 
   // adding initial row when the page loads
   useEffect(() => {
-    if (isLoading) return;
-    append({
-      chart_of_accounts_id: chartOfAccounts?.data[0].id,
-      mfo_paps_id: pap?.data[0].id,
-      amount: 0,
-    });
-  }, [isLoading, chartOfAccounts?.data, pap?.data, append]);
+    if (isFetching) return;
+    if (obligationAccounts && obligationAccounts?.length > 0) {
+      obligationAccounts?.map((account: ObligationAccounts) => {
+        append({
+          chart_of_accounts_id: account.chart_of_accounts_id,
+          mfo_paps_id: account.mfo_paps_id,
+          amount: account.amount,
+        });
+      });
+    } else {
+      append({
+        chart_of_accounts_id: chartOfAccounts?.data[0].id,
+        mfo_paps_id: pap?.data[0].id,
+        amount: 0,
+      });
+    }
+  }, [
+    append,
+    chartOfAccounts?.data,
+    isFetching,
+    obligationAccounts,
+    pap?.data,
+  ]);
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">
@@ -87,7 +106,7 @@ export default function ObligationAccountsTable({
                 </tr>
               </thead>
               <tbody className="bg-white">
-                {!isLoading &&
+                {!isFetching &&
                   fields.map((field, index) => (
                     <AccountsEntryRow
                       key={field.id}
@@ -121,7 +140,6 @@ export default function ObligationAccountsTable({
                   Total (₱):
                 </span>
                 <span className="inline-block ml-5 font-semibold text-lg">
-                  {/* {Number(sumObligationAccountsTotalAmount).toFixed(2)} */}
                   {sumObligationAccountsTotalAmount?.toLocaleString()}
                 </span>
               </div>

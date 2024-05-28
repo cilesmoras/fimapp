@@ -20,6 +20,20 @@ export function useFetchObligationRequests() {
   });
 }
 
+export function useFetchOneObligationRequest(id: string | undefined) {
+  return useQuery({
+    queryKey: [QUERY_KEY, id],
+    queryFn: async () => {
+      try {
+        const response = await axios.get(`${API_URL}/${id}`);
+        return response.data;
+      } catch (err) {
+        console.error(err);
+      }
+    },
+  });
+}
+
 export function useInsertObligationRequest() {
   const queryClient = useQueryClient();
 
