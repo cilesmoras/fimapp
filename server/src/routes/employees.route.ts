@@ -45,7 +45,16 @@ router.post(
   validateInputs,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await createEmployee(req.body);
+      const { prefix, first_name, mid_initial, last_name, suffix, job_title } =
+        req.body;
+      const result = await createEmployee({
+        prefix,
+        first_name,
+        mid_initial,
+        last_name,
+        suffix,
+        job_title,
+      });
       return res.status(201).send(result);
     } catch (error) {
       console.error(error);
@@ -54,12 +63,23 @@ router.post(
   }
 );
 router.patch(
-  "/:id",
+  "/:employeeId",
   validateInputs,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id } = req.params;
-      const result = await updateEmployee({ ...req.body, id });
+      const { prefix, first_name, mid_initial, last_name, suffix, job_title } =
+        req.body;
+      const { employeeId } = req.params;
+      const id = parseInt(employeeId);
+      const result = await updateEmployee({
+        prefix,
+        first_name,
+        mid_initial,
+        last_name,
+        suffix,
+        job_title,
+        id,
+      });
       return res.status(200).send(result);
     } catch (error) {
       console.error(error);

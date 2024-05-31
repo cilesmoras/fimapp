@@ -12,7 +12,7 @@ const router = Router();
 
 const schema = z.object({
   acronym: z.string().min(1).max(5),
-  name: z.string().min(1).max(99),
+  name: z.string().max(99),
 });
 
 const validateInputs = validateFormInput(schema);

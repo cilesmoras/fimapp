@@ -42,7 +42,12 @@ router.post(
   validateInputs,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await createBudget(req.body);
+      const { mfo_paps_id, chart_of_accounts_id, amount } = req.body;
+      const result = await createBudget({
+        mfo_paps_id,
+        chart_of_accounts_id,
+        amount,
+      });
       return res.status(201).send(result);
     } catch (error) {
       console.error(error);
@@ -51,12 +56,19 @@ router.post(
   }
 );
 router.patch(
-  "/:id",
+  "/:budgetId",
   validateInputs,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id } = req.params;
-      const result = await updateBudget({ ...req.body, id });
+      const { budgetId } = req.params;
+      const id = parseInt(budgetId);
+      const { mfo_paps_id, chart_of_accounts_id, amount } = req.body;
+      const result = await updateBudget({
+        mfo_paps_id,
+        chart_of_accounts_id,
+        amount,
+        id,
+      });
       return res.status(200).send(result);
     } catch (error) {
       console.error(error);
