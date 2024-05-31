@@ -30,7 +30,8 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
 });
 router.post("/", async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const result = await createPap(req.body);
+    const { name, description, code } = req.body;
+    const result = await createPap({ name, description, code });
     return res.status(201).send(result);
   } catch (error) {
     console.error(error);
@@ -38,11 +39,13 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 router.patch(
-  "/:id",
+  "/:papId",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id } = req.params;
-      const result = await updatePap({ ...req.body, id });
+      const { papId } = req.params;
+      const id = parseInt(papId);
+      const { name, description, code } = req.body;
+      const result = await updatePap({ name, description, code, id });
       return res.status(200).send(result);
     } catch (error) {
       console.error(error);
