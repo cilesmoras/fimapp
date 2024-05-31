@@ -1,78 +1,44 @@
-import { NextFunction, Request, Response } from "express";
-import { RowDataPacket } from "mysql2";
+import { FieldPacket, ResultSetHeader, RowDataPacket } from "mysql2";
 import connection from "../mysqlConnection";
+import { AllotmentClasses } from "../types/allotmentClasses.types";
 
 const TBL_ALLOTMENT_CLASS = "allotment_classes";
 const TBL_LABEL = "Allotment class";
 
-export const index = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export async function fetchAllotmentClasses() {
   const query = `SELECT * FROM ${TBL_ALLOTMENT_CLASS}`;
-  connection.query(query, (err, result) => {
-    if (err) {
-      console.log(err);
-      return next(err);
-    }
+  const [result] = await connection.query(query);
+  return result;
+}
 
-    return res.send(result);
-  });
-};
-
-export const fetchOne = (req: Request, res: Response, next: NextFunction) => {
-  const { id } = req.params;
+export async function fetchOneAllotmentClass(id: string) {
   const query = `SELECT * FROM ${TBL_ALLOTMENT_CLASS} WHERE id = ?`;
-  connection.query<RowDataPacket[]>(query, [id], (err, result) => {
-    if (err) {
-      console.log(err);
-      return next();
-    }
+  const [result] = await connection.query<RowDataPacket[]>(query, id);
+  return result[0];
+}
 
-    return res.send(result[0]);
-  });
-};
-
-export const insert = (req: Request, res: Response, next: NextFunction) => {
-  const { acronym, name } = req.body;
+export async function createAllotmentClass(data: AllotmentClasses) {
   const query = `INSERT INTO ${TBL_ALLOTMENT_CLASS} (acronym, name) VALUES (?,?)`;
-  connection.query(query, [acronym, name], (err) => {
-    if (err) {
-      console.log(err);
-      return next(err);
-    }
-    return res
-      .status(201)
-      .json({ success: true, message: `${TBL_LABEL} successfully saved.` });
-  });
-};
+  const [result]: [ResultSetHeader, FieldPacket[]] = await connection.query(
+    query,
+    [...Object.values(data)]
+  );
+  const id = result.insertId.toString();
+  return fetchOneAllotmentClass(id);
+}
 
-export const update = (req: Request, res: Response, next: NextFunction) => {
-  const { id } = req.params;
-  const { acronym, name } = req.body;
+export async function updateAllotmentClass(data: AllotmentClasses) {
+  const id = data.id?.toString();
   const query = `UPDATE ${TBL_ALLOTMENT_CLASS} SET acronym = ?, name = ? WHERE id = ?`;
-  connection.query(query, [acronym, name, id], (err) => {
-    if (err) {
-      console.log(err);
-      return next(err);
-    }
-    return res
-      .status(200)
-      .json({ success: true, message: `${TBL_LABEL} successfully saved.` });
-  });
-};
+  const [result]: [ResultSetHeader, FieldPacket[]] = await connection.query(
+    query,
+    [...Object.values(data)]
+  );
+  return fetchOneAllotmentClass(id as string);
+}
 
-export const remove = (req: Request, res: Response, next: NextFunction) => {
-  const { id } = req.params;
+export async function deleteAllotmentClass(id: string) {
   const query = `DELETE FROM ${TBL_ALLOTMENT_CLASS} WHERE id = ?`;
-  connection.query(query, id, (err) => {
-    if (err) {
-      console.log(err);
-      return next();
-    }
-    return res
-      .status(200)
-      .json({ success: true, message: `${TBL_LABEL} has been deleted.` });
-  });
-};
+  const [result] = await connection.query(query, id);
+  return result;
+}

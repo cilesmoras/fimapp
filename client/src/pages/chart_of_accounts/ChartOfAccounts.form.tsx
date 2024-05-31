@@ -1,3 +1,4 @@
+import { ChartOfAccounts } from "@customTypes/chartOfAccounts.types";
 import { CheckIcon } from "@heroicons/react/16/solid";
 import { ExclamationCircleIcon } from "@heroicons/react/20/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,16 +18,15 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 
 const zSchema = z.object({
-  allotmentClassesId: z.string(),
+  allotment_classes_id: z.string(),
   code: z.string().max(15),
   name: z.string().max(120),
 });
 
-export type ChartOfAccountsSchema = z.infer<typeof zSchema>;
+export type ChartOfAccountsFormValues = z.infer<typeof zSchema>;
 
 export type ChartOfAccountsProps = {
-  id?: string;
-  accountData?: ChartOfAccountsSchema;
+  accountData?: ChartOfAccounts;
 };
 
 type AllotmentClassesProps = {
@@ -38,7 +38,6 @@ type AllotmentClassesProps = {
 };
 
 export default function ChartOfAccountsForm({
-  id,
   accountData,
 }: ChartOfAccountsProps) {
   const isAddMode = !accountData;
@@ -61,7 +60,7 @@ export default function ChartOfAccountsForm({
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<ChartOfAccountsSchema>({
+  } = useForm<ChartOfAccountsFormValues>({
     resolver: zodResolver(zSchema),
   });
 
@@ -72,13 +71,13 @@ export default function ChartOfAccountsForm({
     });
   }, [accountData, reset]);
 
-  const ALLOTMENT_CLASS_ID_ERROR = errors?.allotmentClassesId;
+  const ALLOTMENT_CLASSES_ID_ERROR = errors?.allotment_classes_id;
   const CODE_ERROR = errors?.code;
   const NAME_ERROR = errors?.name;
 
   const insertAccount = useInsertChartOfAccount();
-  const updateAccount = useEditChartOfAccount(id);
-  const onSubmit: SubmitHandler<ChartOfAccountsSchema> = async (data) => {
+  const updateAccount = useEditChartOfAccount(accountData?.id);
+  const onSubmit: SubmitHandler<ChartOfAccountsFormValues> = async (data) => {
     if (isAddMode) {
       await insertAccount.mutateAsync(data);
       reset();
@@ -98,10 +97,10 @@ export default function ChartOfAccountsForm({
           <div className="space-y-4">
             <div>
               <p
-                className={`text-danger-600 text-sm mb-4 ${ALLOTMENT_CLASS_ID_ERROR ? "flex gap-2" : "hidden"}`}
+                className={`text-danger-600 text-sm mb-4 ${ALLOTMENT_CLASSES_ID_ERROR ? "flex gap-2" : "hidden"}`}
               >
                 <ExclamationCircleIcon className="size-5" />{" "}
-                {ALLOTMENT_CLASS_ID_ERROR?.message}
+                {ALLOTMENT_CLASSES_ID_ERROR?.message}
               </p>
               <div className="space-y-5">
                 {!isLoading &&
@@ -109,13 +108,13 @@ export default function ChartOfAccountsForm({
                     (allotmentClass: AllotmentClassesProps) => (
                       <Controller
                         key={allotmentClass.id}
-                        name="allotmentClassesId"
+                        name="allotment_classes_id"
                         control={control}
                         render={({ field: { name, onChange, onBlur } }) => (
                           <RadioButton
                             defaultChecked={
                               allotmentClass.id ===
-                              accountData?.allotmentClassesId
+                              accountData?.allotment_classes_id.toString()
                             }
                             key={allotmentClass.id}
                             name={name}
@@ -134,14 +133,14 @@ export default function ChartOfAccountsForm({
               control={control}
               label="Code"
               variant={CODE_ERROR && "danger"}
-              helpText={CODE_ERROR && CODE_ERROR.message}
+              helpText={CODE_ERROR?.message}
             />
             <TextInput
               name="name"
               control={control}
               label="Name"
               variant={NAME_ERROR && "danger"}
-              helpText={NAME_ERROR && NAME_ERROR.message}
+              helpText={NAME_ERROR?.message}
             />
           </div>
           <div className="sm:flex sm:justify-end sm:gap-4 mt-4">

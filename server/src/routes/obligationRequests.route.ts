@@ -1,13 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import { validateFormInput } from "../../middlewares/validateFormInput";
-import {
-  fetchOne,
-  index,
-  insert,
-  remove,
-  update,
-} from "../controllers/obligationRequests.controller";
+import { fetchOne, index } from "../controllers/obligationRequests.controller";
 const router = Router();
 
 const obligationRequestsSchema = z.object({
@@ -24,8 +18,8 @@ const validateInputs = validateFormInput(obligationRequestsSchema);
 
 router.get("/", index);
 router.get("/:id", fetchOne);
-router.post("/", validateInputs, insert);
-router.patch("/:id", validateInputs, update);
-router.delete("/:id", remove);
+// router.post("/", validateInputs, insert);
+// router.patch("/:id", validateInputs, update);
+// router.delete("/:id", remove);
 
 export default router;
