@@ -40,6 +40,6 @@ app.use("/ors-utilization-status", obligationUtilizationStatus);
 
 // Handling errors
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error("Error: ", err.stack);
+  console.error(err.stack);
   res.status(500).send("Internal server error");
 });

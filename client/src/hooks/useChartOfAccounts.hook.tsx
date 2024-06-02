@@ -1,4 +1,4 @@
-import { ChartOfAccountsSchema } from "@pages/chart_of_accounts/ChartOfAccounts.form";
+import { ChartOfAccountsFormValues } from "@pages/chart_of_accounts/ChartOfAccounts.form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import handleApiError from "@utils/handleApiError";
 import axios, { AxiosError } from "axios";
@@ -56,12 +56,12 @@ export function useInsertChartOfAccount() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: ChartOfAccountsSchema) => {
+    mutationFn: async (data: ChartOfAccountsFormValues) => {
       try {
         const res = await axios.post(API_URL, data);
         return {
           response: res.data,
-          allotmentClassesId: data.allotmentClassesId,
+          allotmentClassesId: data.allotment_classes_id,
         };
       } catch (err) {
         throw new Error(handleApiError(err as AxiosError));
@@ -75,16 +75,16 @@ export function useInsertChartOfAccount() {
   });
 }
 
-export function useEditChartOfAccount(id: string | undefined) {
+export function useEditChartOfAccount(id: number | undefined) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: ChartOfAccountsSchema) => {
+    mutationFn: async (data: ChartOfAccountsFormValues) => {
       try {
         const res = await axios.patch(`${API_URL}/${id}`, data);
         return {
           response: res.data,
-          allotmentClassesId: data.allotmentClassesId,
+          allotment_classes_id: data.allotment_classes_id,
         };
       } catch (err) {
         throw new Error(handleApiError(err as AxiosError));
