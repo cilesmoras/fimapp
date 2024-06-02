@@ -19,18 +19,6 @@ export async function fetchByObligationRequestId(
     console.log(error);
     next(error);
   }
-  // connection.query<RowDataPacket[]>(
-  //   query,
-  //   [obligation_request_id],
-  //   (err, result) => {
-  //     if (err) {
-  //       console.log(err);
-  //       return next();
-  //     }
-
-  //     return res.send(result);
-  //   }
-  // );
 }
 
 export async function createUtilizationStatus(
