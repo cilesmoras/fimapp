@@ -45,7 +45,51 @@ export function useInsertObligationRequest() {
           response: res.data,
         };
       } catch (err) {
-        throw new Error(handleApiError(err as AxiosError));
+        // throw new Error();
+        handleApiError(err as AxiosError);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEY],
+      });
+    },
+  });
+}
+
+export function useUpdateObligationRequest(id: string | undefined) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: ObligationRequest) => {
+      try {
+        const res = await axios.patch(`${API_URL}/${id}`, data);
+        return {
+          response: res.data,
+        };
+      } catch (err) {
+        handleApiError(err as AxiosError);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEY, id],
+      });
+    },
+  });
+}
+
+export function useDeleteObligationRequest() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: number) => {
+      try {
+        const result = await axios.delete(`${API_URL}/${id}`);
+        console.log(result);
+        return result.data;
+      } catch (err) {
+        handleApiError(err as AxiosError);
       }
     },
     onSuccess: () => {

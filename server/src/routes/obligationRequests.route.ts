@@ -1,13 +1,21 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { z } from "zod";
 import { validateFormInput } from "../../middlewares/validateFormInput";
-import { createObligationAccounts } from "../controllers/obligationAccounts.controller";
+import {
+  createObligationAccounts,
+  deleteObligationAccountsByObligationRequestId,
+} from "../controllers/obligationAccounts.controller";
 import {
   createObligationRequest,
+  deleteObligationRequest,
   fetchObligationRequests,
   fetchOneObligationRequest,
+  updateObligationRequest,
 } from "../controllers/obligationRequests.controller";
-import { createUtilizationStatus } from "../controllers/obligationUtilizationStatus.controller";
+import {
+  createUtilizationStatus,
+  deleteUtilizationStatusByObligationRequestId,
+} from "../controllers/obligationUtilizationStatus.controller";
 import connection from "../mysqlConnection";
 import { ObligationAccounts } from "../types/obligationAccounts.types";
 import { UtilizationStatus } from "../types/utilizationStatus.types";
@@ -65,6 +73,7 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
+// create obligation request
 router.post(
   "/",
   validateInputs,
@@ -84,7 +93,8 @@ router.post(
       } = req.body;
       // begin the transaction
       pool.beginTransaction();
-      const obligationRequestId = await createObligationRequest(
+      // insert the obligation quest
+      const resultObligationRequest = await createObligationRequest(
         {
           serial_no,
           fund_cluster,
@@ -98,16 +108,34 @@ router.post(
       );
 
       // inserting the obligation accounts
+      let resultObligationAccounts = {};
       obligation_accounts.forEach(async (data: ObligationAccounts) => {
-        await createObligationAccounts(data, pool, obligationRequestId);
+        resultObligationAccounts = await createObligationAccounts(
+          data,
+          pool,
+          resultObligationRequest.insertId
+        );
       });
       // insert the utilization status
+      let resultUtilizationStatus = {};
       utilization_status.forEach(async (data: UtilizationStatus) => {
-        await createUtilizationStatus(data, pool, obligationRequestId);
+        resultUtilizationStatus = await createUtilizationStatus(
+          data,
+          pool,
+          resultObligationRequest.insertId
+        );
       });
 
       pool.commit();
-      // add the obligation account and utilization status insert function
+      res.status(201).json({
+        status: "success",
+        message: "ORS has been created",
+        data: {
+          resultObligationRequest,
+          resultObligationAccounts,
+          resultUtilizationStatus,
+        },
+      });
     } catch (error) {
       pool.rollback();
       console.error("Query error:", error);
@@ -118,8 +146,103 @@ router.post(
   }
 );
 
-// router.patch("/:id", validateInputs, update);
+// update obligation request
+router.patch(
+  "/:obligationRequestId",
+  validateInputs,
+  async (req: Request, res: Response, next: NextFunction) => {
+    const pool = await connection.getConnection();
 
-// router.delete("/:id", remove);
+    try {
+      const { obligationRequestId } = req.params;
+      const id = parseInt(obligationRequestId);
+      const {
+        serial_no,
+        fund_cluster,
+        payee,
+        payee_office,
+        payee_office_address,
+        particulars,
+        date,
+        obligation_accounts,
+        utilization_status,
+      } = req.body;
+
+      // begin the transaction
+      pool.beginTransaction();
+      // update the obligation quest
+      const resultObligationRequest = await updateObligationRequest(
+        {
+          serial_no,
+          fund_cluster,
+          payee,
+          payee_office,
+          payee_office_address,
+          particulars,
+          date,
+          id,
+        },
+        pool
+      );
+
+      // deleting all obligation accounts by obligation request id
+      await deleteObligationAccountsByObligationRequestId(id);
+      // insert again the new data
+      let resultObligationAccounts = {};
+      obligation_accounts.forEach(async (data: ObligationAccounts) => {
+        resultObligationAccounts = await createObligationAccounts(
+          data,
+          pool,
+          id
+        );
+      });
+
+      // deleting all utilization status first and insert
+      await deleteUtilizationStatusByObligationRequestId(id);
+      // insert the utilization status
+      let resultUtilizationStatus = {};
+      utilization_status.forEach(async (data: UtilizationStatus) => {
+        resultUtilizationStatus = await createUtilizationStatus(data, pool, id);
+      });
+
+      pool.commit();
+      res.status(200).json({
+        status: "success",
+        message: "ORAS has been updated",
+        data: {
+          resultObligationRequest,
+          resultObligationAccounts,
+          resultUtilizationStatus,
+        },
+      });
+    } catch (error) {
+      pool.rollback();
+      console.error("Query error:", error);
+      next(error);
+    } finally {
+      connection.releaseConnection(pool);
+    }
+  }
+);
+
+router.delete(
+  "/:id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const result = await deleteObligationRequest(Number(id));
+      if (!result) {
+        res
+          .status(404)
+          .json({ status: "error", message: "Resource not found." });
+      }
+
+      res.sendStatus(204);
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  }
+);
 
 export default router;

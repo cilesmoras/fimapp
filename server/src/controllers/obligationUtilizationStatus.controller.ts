@@ -1,24 +1,13 @@
-import { NextFunction, Request, Response } from "express";
 import { PoolConnection } from "mysql2/promise";
 import connection from "../mysqlConnection";
 import { UtilizationStatus } from "../types/utilizationStatus.types";
 
 const TBL_UTILIZATION_STATUS = "obligation_utilization_status";
 
-export async function fetchByObligationRequestId(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const { obligation_request_id } = req.params;
-    const query = `SELECT * FROM ${TBL_UTILIZATION_STATUS} WHERE obligation_request_id = ?`;
-    const [result] = await connection.query(query, [obligation_request_id]);
-    return res.send(result);
-  } catch (error) {
-    console.log(error);
-    next(error);
-  }
+export async function fetchUtilizationStatusByObligationRequestId(id: string) {
+  const query = `SELECT * FROM ${TBL_UTILIZATION_STATUS} WHERE obligation_request_id = ?`;
+  const [result] = await connection.query(query, id);
+  return result;
 }
 
 export async function createUtilizationStatus(
@@ -29,7 +18,7 @@ export async function createUtilizationStatus(
   const { date, particulars, ref_no, utilization_amount, payable, payment } =
     utilizationStatus;
   const query = `INSERT INTO ${TBL_UTILIZATION_STATUS} (obligation_request_id, date, particulars, ref_no, utilization_amount, payable, payment) VALUES (?,?,?,?,?,?,?)`;
-  await pool.query(query, [
+  const [result] = await pool.query(query, [
     obligationRequestId,
     date,
     particulars,
@@ -38,4 +27,12 @@ export async function createUtilizationStatus(
     payable,
     payment,
   ]);
+
+  return result;
+}
+
+export async function deleteUtilizationStatusByObligationRequestId(id: number) {
+  const query = `DELETE FROM ${TBL_UTILIZATION_STATUS} WHERE obligation_request_id = ?`;
+  const [result] = await connection.query(query, id);
+  return result;
 }

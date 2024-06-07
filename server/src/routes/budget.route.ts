@@ -48,7 +48,11 @@ router.post(
         chart_of_accounts_id,
         amount,
       });
-      return res.status(201).send(result);
+      return res.status(201).json({
+        status: "success",
+        message: "Budget has been created.",
+        data: result,
+      });
     } catch (error) {
       console.error(error);
       next(error);
@@ -69,7 +73,12 @@ router.patch(
         amount,
         id,
       });
-      return res.status(200).send(result);
+
+      return res.status(200).json({
+        status: "success",
+        message: "Budget has been updated.",
+        data: result,
+      });
     } catch (error) {
       console.error(error);
       next(error);
@@ -82,7 +91,10 @@ router.delete(
     try {
       const { id } = req.params;
       const result = await deleteBudget(id);
-      return res.status(200).send(result);
+      return res.status(200).json({
+        status: "success",
+        message: "Budget has been deleted.",
+      });
     } catch (error) {
       console.error(error);
       next(error);

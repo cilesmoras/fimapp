@@ -2,11 +2,15 @@ import { ObligationRequest } from "@customTypes/ObligationRequest.types";
 import { CheckIcon } from "@heroicons/react/16/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFetchObligationAccounts } from "@hooks/useObligationAccounts.hook";
-import { useInsertObligationRequest } from "@hooks/useObligationRequest.hook";
+import {
+  useInsertObligationRequest,
+  useUpdateObligationRequest,
+} from "@hooks/useObligationRequest.hook";
 import { useFetchObligationUtilizationStatus } from "@hooks/useObligationUtilizationStatus.hook";
 import Button from "@ui/Button";
 import Loading from "@ui/Loading";
 import SpinnerIcon from "@ui/SpinnerIcon";
+import SuccessModal from "@ui/SuccessModal";
 import TextInput from "@ui/TextInput";
 import Textarea from "@ui/Textarea";
 import { format } from "date-fns";
@@ -74,6 +78,7 @@ export default function ObligationRequestsForm({
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<ObligationRequestFormValues>({
     resolver: zodResolver(obligationRequestSchema),
@@ -107,9 +112,15 @@ export default function ObligationRequestsForm({
   const dateError = errors.date;
 
   const insertMutation = useInsertObligationRequest();
-  async function onSubmit(data: ObligationRequestFormValues) {
-    console.log(data);
-    await insertMutation.mutateAsync(data);
+  const updateMutation = useUpdateObligationRequest(data?.id?.toString());
+  async function onSubmit(formValues: ObligationRequestFormValues) {
+    if (isAddMode) {
+      await insertMutation.mutateAsync(formValues);
+      reset();
+      return;
+    }
+
+    await updateMutation.mutateAsync(formValues);
   }
 
   if (obligationAccounts?.isLoading) return <Loading />;
@@ -305,6 +316,12 @@ export default function ObligationRequestsForm({
           </div>
         </form>
       </Panel>
+      <SuccessModal
+        title="Save successfully"
+        description="Obligation Request and Status has been saved."
+        isOpen={insertMutation.isSuccess || updateMutation.isSuccess}
+        buttonText="Close"
+      />
     </>
   );
 }

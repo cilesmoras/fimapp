@@ -7,7 +7,7 @@ const link = cva(["font-semibold"], {
     linkType: {
       default: [
         "inline-flex items-center text-primary-600",
-        "hover:text-indigo-900",
+        "hover:text-primary-900",
       ],
       button: [
         "text-white",

@@ -34,5 +34,23 @@ export async function createObligationRequest(
     query,
     Object.values(data)
   );
-  return result.insertId;
+  return result;
+}
+
+export async function updateObligationRequest(
+  data: ObligationRequest,
+  pool: PoolConnection
+) {
+  const query = `UPDATE ${TBL_OBLIGATION_REQ} SET serial_no = ?, fund_cluster = ?, payee = ?, payee_office = ?, payee_office_address = ?, particulars = ?, date = ? WHERE id = ?`;
+  const [result]: [ResultSetHeader, FieldPacket[]] = await pool.query(
+    query,
+    Object.values(data)
+  );
+  return result;
+}
+
+export async function deleteObligationRequest(id: number) {
+  const query = `DELETE FROM ${TBL_OBLIGATION_REQ} WHERE id = ?`;
+  const [result] = await connection.query(query, id);
+  return result;
 }
