@@ -26,6 +26,7 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 });
+
 router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
@@ -36,6 +37,7 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 });
+
 router.post(
   "/",
   validateInputs,
@@ -43,13 +45,18 @@ router.post(
     try {
       const { acronym, name } = req.body;
       const result = await createAllotmentClass({ acronym, name });
-      return res.status(201).send(result);
+      return res.status(201).json({
+        status: "success",
+        message: "Allotment class has been created.",
+        data: result,
+      });
     } catch (error) {
       console.error(error);
       next(error);
     }
   }
 );
+
 router.patch(
   "/:allotmentClassesId",
   validateInputs,
@@ -59,20 +66,30 @@ router.patch(
       const id = parseInt(allotmentClassesId);
       const { acronym, name } = req.body;
       const result = await updateAllotmentClass({ acronym, name, id });
-      return res.status(200).send(result);
+      return res.status(200).json({
+        status: "success",
+        message: "Allotment class has been updated.",
+        data: result,
+      });
     } catch (error) {
       console.error(error);
       next(error);
     }
   }
 );
+
 router.delete(
   "/:id",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
       const result = await deleteAllotmentClass(id);
-      return res.status(200).send(result);
+      return res
+        .status(204)
+        .json({
+          status: "success",
+          message: "Allotment class has been deleted.",
+        });
     } catch (error) {
       console.error(error);
       next(error);

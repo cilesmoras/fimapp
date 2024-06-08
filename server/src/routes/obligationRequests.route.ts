@@ -138,7 +138,7 @@ router.post(
       });
     } catch (error) {
       pool.rollback();
-      console.error("Query error:", error);
+      console.error(error);
       next(error);
     } finally {
       connection.releaseConnection(pool);
@@ -208,7 +208,7 @@ router.patch(
       pool.commit();
       res.status(200).json({
         status: "success",
-        message: "ORAS has been updated",
+        message: "ORS has been updated",
         data: {
           resultObligationRequest,
           resultObligationAccounts,
@@ -217,7 +217,7 @@ router.patch(
       });
     } catch (error) {
       pool.rollback();
-      console.error("Query error:", error);
+      console.error(error);
       next(error);
     } finally {
       connection.releaseConnection(pool);
@@ -237,7 +237,13 @@ router.delete(
           .json({ status: "error", message: "Resource not found." });
       }
 
-      res.sendStatus(204);
+      res
+        .status(200)
+        .json({
+          status: "success",
+          message: "ORS has been deleted.",
+          data: result,
+        });
     } catch (error) {
       console.error(error);
       next(error);

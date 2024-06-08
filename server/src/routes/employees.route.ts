@@ -55,7 +55,11 @@ router.post(
         suffix,
         job_title,
       });
-      return res.status(201).send(result);
+      return res.status(201).json({
+        status: "success",
+        message: "Employee has been created.",
+        data: result,
+      });
     } catch (error) {
       console.error(error);
       next(error);
@@ -80,7 +84,11 @@ router.patch(
         job_title,
         id,
       });
-      return res.status(200).send(result);
+      return res.status(200).json({
+        status: "success",
+        message: "Employee has been updated.",
+        data: result,
+      });
     } catch (error) {
       console.error(error);
       next(error);
@@ -93,7 +101,11 @@ router.delete(
     try {
       const { id } = req.params;
       const result = await deleteEmployee(id);
-      return res.status(200).send(result);
+      return res.status(200).json({
+        status: "success",
+        message: "Employee has been deleted.",
+        data: result,
+      });
     } catch (error) {
       console.error(error);
       next(error);

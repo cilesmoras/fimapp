@@ -27,6 +27,7 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 });
+
 router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
@@ -37,6 +38,7 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 });
+
 router.post(
   "/",
   validateInputs,
@@ -48,6 +50,7 @@ router.post(
         chart_of_accounts_id,
         amount,
       });
+
       return res.status(201).json({
         status: "success",
         message: "Budget has been created.",
@@ -59,6 +62,7 @@ router.post(
     }
   }
 );
+
 router.patch(
   "/:budgetId",
   validateInputs,
@@ -90,7 +94,7 @@ router.delete(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
-      const result = await deleteBudget(id);
+      await deleteBudget(id);
       return res.status(200).json({
         status: "success",
         message: "Budget has been deleted.",

@@ -18,6 +18,7 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 });
+
 router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
@@ -28,16 +29,22 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 });
+
 router.post("/", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { name, description, code } = req.body;
     const result = await createPap({ name, description, code });
-    return res.status(201).send(result);
+    return res.status(201).json({
+      status: "success",
+      message: "Pap has been created.",
+      data: result,
+    });
   } catch (error) {
     console.error(error);
     next(error);
   }
 });
+
 router.patch(
   "/:papId",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -46,7 +53,11 @@ router.patch(
       const id = parseInt(papId);
       const { name, description, code } = req.body;
       const result = await updatePap({ name, description, code, id });
-      return res.status(200).send(result);
+      return res.status(200).json({
+        status: "success",
+        message: "Pap has been updated.",
+        data: result,
+      });
     } catch (error) {
       console.error(error);
       next(error);
@@ -59,7 +70,11 @@ router.delete(
     try {
       const { id } = req.params;
       const result = await deletePap(id);
-      return res.status(200).send(result);
+      return res.status(200).json({
+        status: "success",
+        message: "Pap has been deleted.",
+        data: result,
+      });
     } catch (error) {
       console.error(error);
       next(error);

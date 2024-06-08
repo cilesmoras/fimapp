@@ -67,7 +67,11 @@ router.post(
         code,
         name,
       });
-      return res.status(201).send(result);
+      return res.status(201).json({
+        status: "success",
+        message: "Chart of account has been created.",
+        data: result,
+      });
     } catch (error) {
       console.error(error);
       next(error);
@@ -88,7 +92,12 @@ router.patch(
         name,
         id,
       });
-      return res.status(200).send(result);
+
+      return res.status(200).json({
+        status: "success",
+        message: "Chat of account has been updated.",
+        data: result,
+      });
     } catch (error) {
       console.error(error);
       next(error);
@@ -101,7 +110,11 @@ router.delete(
     try {
       const { id } = req.params;
       const result = await deleteChartOfAccount(id);
-      return res.status(200).send(result);
+      return res.status(200).send({
+        status: "success",
+        message: "Chart of account has been deleted.",
+        data: result,
+      });
     } catch (error) {
       console.error(error);
       next(error);
